@@ -674,9 +674,9 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
         ? `Problem: ${topic.replace(/\\/g, '\\\\')}`
         : `Problem: ${topic.replace(/\\/g, '\\\\')}\nReturn ${mode} JSON.${sb}`;
 
-      // --- Gemini API ---
+      // --- Gemini API (using gemini-3.5-flash model) ---
       if (prov === 'gemini') {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(key)}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${encodeURIComponent(key)}`;
         const body = {
           system_instruction: { parts: [{ text: systemPrompt }] },
           contents: [{ parts: [{ text: userMessage }], role: 'user' }],
