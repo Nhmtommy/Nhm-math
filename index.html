@@ -317,7 +317,7 @@
   <div class="settings-drawer">
     <button class="close-drawer" id="closeDrawerBtn">✕</button>
     <h2>Settings</h2>
-    <label>Provider</label><select id="providerSelect"><option value="deepseek">DeepSeek</option><option value="groq">Groq</option></select>
+    <label>Provider</label><select id="providerSelect"><option value="groq">Groq</option><option value="deepseek">DeepSeek</option></select>
     <label>API Key</label><input type="password" id="apiKeyInput" placeholder="sk-..." autocomplete="off">
     <label>Syllabus</label><textarea id="syllabusInput" rows="3" placeholder="Paste syllabus..."></textarea>
     <div class="drawer-btns"><button class="btn-sm primary" id="saveSettingsBtn">Save</button><button class="btn-sm" id="clearSyllabusBtn">Clear</button></div>
@@ -331,12 +331,11 @@
     const STORAGE_PROVIDER = 'ms_provider', STORAGE_KEY = 'ms_apikey',
           STORAGE_SYLLABUS = 'ms_syllabus', STORAGE_HIST = 'ms_history';
 
-    // --- HARDCODED DEFAULT API KEYS ---
+    // --- Default API key (Groq only) ---
     const DEFAULT_KEYS = {
-      deepseek: 'sk-8f360c860fa24bcaa569bc002ca7a6ab',
       groq: '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'
     };
-    // --------------------------------
+    // ---------------------------------
 
     const MATH_PROMPT = `You are a math solver. Output ONLY steps with minimal text. Use LaTeX for math ($...$ or $$...$$). Return clean JSON.
 For "solution": { "solution": ["Step 1: ...", "Step 2: ...", ... ] }.
@@ -429,28 +428,29 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
     let mathInput = null;
     let history = [];
 
-    // Load settings (with hardcoded defaults)
-    providerSelect.value = localStorage.getItem(STORAGE_PROVIDER) || 'deepseek';
+    // Load settings – default provider is Groq
+    providerSelect.value = localStorage.getItem(STORAGE_PROVIDER) || 'groq';
 
-    // Set API key: use saved key if present, else default for current provider
     const savedKey = localStorage.getItem(STORAGE_KEY);
     if (savedKey) {
       apiKeyInput.value = savedKey;
     } else {
-      // Use the default key matching the current provider
+      // Use default Groq key if no saved key exists
       apiKeyInput.value = DEFAULT_KEYS[providerSelect.value] || '';
     }
 
     if (localStorage.getItem(STORAGE_SYLLABUS)) syllabusInput.value = localStorage.getItem(STORAGE_SYLLABUS);
     try { history = JSON.parse(localStorage.getItem(STORAGE_HIST) || '[]'); } catch(e) {}
 
-    // Auto‑fill API key when provider changes, if current key is empty or a known default
+    // Auto‑fill / clear API key when provider changes
     providerSelect.addEventListener('change', () => {
       const currentKey = apiKeyInput.value.trim();
-      const knownKeys = Object.values(DEFAULT_KEYS);
+      const knownKeys = Object.values(DEFAULT_KEYS); // only the Groq key
       if (currentKey === '' || knownKeys.includes(currentKey)) {
+        // If current key is empty or is the hardcoded Groq key, set to the default for the new provider (or empty)
         apiKeyInput.value = DEFAULT_KEYS[providerSelect.value] || '';
       }
+      // If the user had typed a custom key (e.g., DeepSeek key), we leave it untouched
     });
 
     formatChips.forEach(c => c.addEventListener('click', () => {
@@ -651,7 +651,6 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
       return html;
     }
 
-    // Sanitize LaTeX comments
     function sanitizeLatex(text) {
       return text.replace(/(?<!\\)%/g, '');
     }
@@ -666,11 +665,11 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
     }
 
     async function callAI(key, topic, mode, customPrompt = null) {
-      const prov = localStorage.getItem(STORAGE_PROVIDER)||'deepseek';
+      const prov = localStorage.getItem(STORAGE_PROVIDER)||'groq';
       const syl = localStorage.getItem(STORAGE_SYLLABUS)||'';
       const sb = syl.trim() ? `\n\nSyllabus:\n"""\n${syl.trim()}\n"""` : '';
-      const url = prov==='groq' ? 'https://api.groq.com/openai/v1/chat/completions' : 'https://api.deepseek.com/v1/chat/completions';
-      const model = prov==='groq' ? 'llama-3.1-8b-instant' : 'deepseek-chat';
+      const url = prov==='deepseek' ? 'https://api.deepseek.com/v1/chat/completions' : 'https://api.groq.com/openai/v1/chat/completions';
+      const model = prov==='deepseek' ? 'deepseek-chat' : 'llama-3.1-8b-instant';
       const systemPrompt = customPrompt || MATH_PROMPT;
       const userMessage = customPrompt ? `Problem: ${topic.replace(/\\/g,'\\\\')}` : `Problem: ${topic.replace(/\\/g,'\\\\')}\nReturn ${mode} JSON.${sb}`;
       const res = await fetch(url, {
