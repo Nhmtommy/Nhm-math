@@ -331,13 +331,7 @@
     const STORAGE_PROVIDER = 'ms_provider', STORAGE_KEY = 'ms_apikey',
           STORAGE_SYLLABUS = 'ms_syllabus', STORAGE_HIST = 'ms_history';
 
-    // --- Hardcoded default API keys ---
-    const DEFAULT_KEYS = {
-      groq: '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',
-      gemini: 'AQ.Ab8RN6Kabv0CheHnJw043DYKbVztK91OnxRPUpUh7y3hVoxFfQ'
-    };
-    // DeepSeek intentionally left out – user must input their own key.
-
+    // No hardcoded keys – user must provide their own.
     const MATH_PROMPT = `You are a math solver. Output ONLY steps with minimal text. Use LaTeX for math ($...$ or $$...$$). Return clean JSON.
 For "solution": { "solution": ["Step 1: ...", "Step 2: ...", ... ] }.
 For "flashcards": { "flashcards": [ {"front":"...", "back":"..."}, ... ] }.
@@ -429,30 +423,14 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
     let mathInput = null;
     let history = [];
 
-    // Load settings – default provider is Groq
+    // Load settings – default provider is Groq, no key preset
     providerSelect.value = localStorage.getItem(STORAGE_PROVIDER) || 'groq';
-
-    const savedKey = localStorage.getItem(STORAGE_KEY);
-    if (savedKey) {
-      apiKeyInput.value = savedKey;
-    } else {
-      // Use default key for the current provider if available, else empty
-      apiKeyInput.value = DEFAULT_KEYS[providerSelect.value] || '';
-    }
+    apiKeyInput.value = localStorage.getItem(STORAGE_KEY) || '';
 
     if (localStorage.getItem(STORAGE_SYLLABUS)) syllabusInput.value = localStorage.getItem(STORAGE_SYLLABUS);
     try { history = JSON.parse(localStorage.getItem(STORAGE_HIST) || '[]'); } catch(e) {}
 
-    // Auto‑fill / clear API key when provider changes
-    providerSelect.addEventListener('change', () => {
-      const currentKey = apiKeyInput.value.trim();
-      const knownKeys = Object.values(DEFAULT_KEYS);
-      if (currentKey === '' || knownKeys.includes(currentKey)) {
-        // If current key is empty or matches a known default, fill with the new provider's default (if any)
-        apiKeyInput.value = DEFAULT_KEYS[providerSelect.value] || '';
-      }
-      // If the user had typed a custom key, leave it untouched.
-    });
+    // No automatic key fill when provider changes – user manages keys manually
 
     formatChips.forEach(c => c.addEventListener('click', () => {
       formatChips.forEach(x => { x.classList.remove('active'); x.setAttribute('aria-pressed','false'); });
@@ -545,6 +523,7 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
     saveSettingsBtn.addEventListener('click', () => {
       localStorage.setItem(STORAGE_PROVIDER, providerSelect.value);
       if (apiKeyInput.value.trim()) localStorage.setItem(STORAGE_KEY, apiKeyInput.value.trim());
+      else localStorage.removeItem(STORAGE_KEY);
       if (syllabusInput.value.trim()) localStorage.setItem(STORAGE_SYLLABUS, syllabusInput.value.trim());
       else localStorage.removeItem(STORAGE_SYLLABUS);
       syllabusStatus.textContent = '✓ Saved'; setTimeout(() => syllabusStatus.textContent='', 1500);
@@ -674,7 +653,7 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
         ? `Problem: ${topic.replace(/\\/g, '\\\\')}`
         : `Problem: ${topic.replace(/\\/g, '\\\\')}\nReturn ${mode} JSON.${sb}`;
 
-      // --- Gemini API (using gemini-3.5-flash model) ---
+      // --- Gemini API ---
       if (prov === 'gemini') {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${encodeURIComponent(key)}`;
         const body = {
