@@ -318,7 +318,7 @@
     <button class="close-drawer" id="closeDrawerBtn">✕</button>
     <h2>Settings</h2>
     <label>Provider</label><select id="providerSelect"><option value="groq">Groq</option><option value="gemini">Gemini</option><option value="deepseek">DeepSeek</option></select>
-    <label>API Key</label><input type="password" id="apiKeyInput" placeholder="sk-..." autocomplete="off">
+    <label>API Key</label><input type="password" id="apiKeyInput" placeholder="Enter your API key" autocomplete="off">
     <label>Syllabus</label><textarea id="syllabusInput" rows="3" placeholder="Paste syllabus..."></textarea>
     <div class="drawer-btns"><button class="btn-sm primary" id="saveSettingsBtn">Save</button><button class="btn-sm" id="clearSyllabusBtn">Clear</button></div>
     <small id="syllabusStatus" style="color:var(--accent-blue);display:block;margin-top:8px;"></small>
@@ -331,7 +331,7 @@
     const STORAGE_PROVIDER = 'ms_provider', STORAGE_KEY = 'ms_apikey',
           STORAGE_SYLLABUS = 'ms_syllabus', STORAGE_HIST = 'ms_history';
 
-    // No hardcoded keys – user must provide their own.
+    // No hardcoded keys – completely empty by default.
     const MATH_PROMPT = `You are a math solver. Output ONLY steps with minimal text. Use LaTeX for math ($...$ or $$...$$). Return clean JSON.
 For "solution": { "solution": ["Step 1: ...", "Step 2: ...", ... ] }.
 For "flashcards": { "flashcards": [ {"front":"...", "back":"..."}, ... ] }.
@@ -423,14 +423,12 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
     let mathInput = null;
     let history = [];
 
-    // Load settings – default provider is Groq, no key preset
+    // Load settings – no default keys, only previously saved keys if any
     providerSelect.value = localStorage.getItem(STORAGE_PROVIDER) || 'groq';
-    apiKeyInput.value = localStorage.getItem(STORAGE_KEY) || '';
+    apiKeyInput.value = localStorage.getItem(STORAGE_KEY) || ''; // empty by default
 
     if (localStorage.getItem(STORAGE_SYLLABUS)) syllabusInput.value = localStorage.getItem(STORAGE_SYLLABUS);
     try { history = JSON.parse(localStorage.getItem(STORAGE_HIST) || '[]'); } catch(e) {}
-
-    // No automatic key fill when provider changes – user manages keys manually
 
     formatChips.forEach(c => c.addEventListener('click', () => {
       formatChips.forEach(x => { x.classList.remove('active'); x.setAttribute('aria-pressed','false'); });
@@ -653,7 +651,7 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
         ? `Problem: ${topic.replace(/\\/g, '\\\\')}`
         : `Problem: ${topic.replace(/\\/g, '\\\\')}\nReturn ${mode} JSON.${sb}`;
 
-      // --- Gemini API ---
+      // --- Gemini API (gemini-3.5-flash) ---
       if (prov === 'gemini') {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${encodeURIComponent(key)}`;
         const body = {
