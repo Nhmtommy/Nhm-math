@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>~Nhm Learns Math</title>
 
+  <!-- PWA Meta -->
+  <meta name="theme-color" content="#1A1A1A">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Nhm Math">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='32' fill='%231A1A1A'/%3E%3Ctext x='96' y='120' font-size='72' font-family='JetBrains Mono,monospace' fill='%23D97742' text-anchor='middle' font-weight='800'%3ENHM%3C/text%3E%3C/svg%3E">
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -65,35 +72,29 @@
       --spring: cubic-bezier(.34,1.56,.64,1);
     }
 
-    /* ── LIGHT THEME ────────────────────────────────────── */
     .light {
       --bg0: #FAFAFA;
       --bg1: #F0F0F0;
       --bg2: #FFFFFF;
       --bg3: #E8E8E8;
       --bg4: #DDDDDD;
-
       --vio:   #D97742;
       --vio-l: #C86A35;
       --vio-d: rgba(217,119,66,.08);
       --vio-g: rgba(217,119,66,.18);
-
       --gold:  #D97742;
       --gold-l:#C86A35;
       --gold-d:rgba(217,119,66,.06);
       --gold-g:rgba(217,119,66,.15);
-
       --t0: #1A1A1A;
       --t1: #555555;
       --t2: #888888;
-
       --br:  rgba(0,0,0,.08);
       --brh: rgba(217,119,66,.30);
     }
 
     *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
     html{height:-webkit-fill-available;font-size:16px}
-
     body{
       background:var(--bg0);
       color:var(--t0);
@@ -103,8 +104,6 @@
       -webkit-font-smoothing:antialiased;
       transition: background .3s;
     }
-
-    /* ambient blobs */
     body::before{
       content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
       background:
@@ -115,13 +114,36 @@
       transition: opacity .4s;
     }
     .light body::before { opacity: .3; }
-
     body::after{
       content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
       background-image:radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);
       background-size:27px 27px;
       opacity: .6;
     }
+
+    /* Install button */
+    #installBanner {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
+      background: var(--vio);
+      color: #fff;
+      border-radius: var(--pill);
+      font-weight: 700;
+      font-size: .92rem;
+      cursor: pointer;
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 300;
+      box-shadow: 0 8px 24px rgba(0,0,0,.5);
+      animation: fadeUp .35s var(--ease);
+      border: none;
+    }
+    #installBanner.show { display: flex; }
 
     .app{
       width:min(100%,920px);
@@ -136,26 +158,9 @@
     .app::-webkit-scrollbar-track{background:transparent}
     .app::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
 
-    .brand{
-      text-align:center;
-      padding:12px 0 16px;
-      margin-bottom:14px;
-      border-bottom:1px solid var(--br);
-    }
-    .brand h1{
-      font-family:var(--mono);
-      font-size:clamp(1.5rem,6.5vw,2.35rem);
-      font-weight:800;
-      letter-spacing:-.04em;
-      display:inline-block;
-    }
-    .brand-txt{
-      background:linear-gradient(130deg,var(--vio-l) 0%,var(--vio) 52%,var(--gold-l) 100%);
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-      background-clip:text;
-      filter:drop-shadow(0 0 22px rgba(217,119,66,.25));
-    }
+    .brand{text-align:center;padding:12px 0 16px;margin-bottom:14px;border-bottom:1px solid var(--br)}
+    .brand h1{font-family:var(--mono);font-size:clamp(1.5rem,6.5vw,2.35rem);font-weight:800;letter-spacing:-.04em;display:inline-block}
+    .brand-txt{background:linear-gradient(130deg,var(--vio-l) 0%,var(--vio) 52%,var(--gold-l) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 22px rgba(217,119,66,.25))}
     .brand-cur{display:inline-block;width:3px;height:.82em;background:var(--vio-l);vertical-align:middle;margin-left:3px;border-radius:1px;animation:blink 1.1s step-end infinite}
     @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
     .tagline{font-size:clamp(.68rem,2.2vw,.8rem);color:var(--t2);letter-spacing:.14em;text-transform:uppercase;margin-top:5px;font-weight:500}
@@ -166,7 +171,6 @@
     .nav-item.active{color:var(--vio-l);transform:translateY(-1px)}
     .nav-item.active::before{content:'';position:absolute;top:-1px;left:50%;transform:translateX(-50%);width:28px;height:2px;background:linear-gradient(90deg,var(--vio),var(--vio-l));border-radius:0 0 2px 2px;box-shadow:0 0 10px var(--vio-g)}
     .nav-item svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8}
-    .nav-item.active svg{filter:drop-shadow(0 0 6px var(--vio-g))}
 
     .tab-bar{display:flex;gap:3px;background:var(--bg2);border:1px solid var(--br);border-radius:var(--pill);padding:4px;margin-bottom:14px}
     .tab-btn{flex:1;padding:8px 16px;border:none;background:transparent;color:var(--t2);font-size:.82rem;font-weight:600;letter-spacing:.02em;border-radius:var(--pill);cursor:pointer;transition:all .22s var(--ease)}
@@ -191,7 +195,6 @@
     math-field{display:block;width:100%;color:var(--t0);background:transparent;border:none;outline:none;min-height:52px;font-size:clamp(1.1rem,4vw,1.7rem);--caret-color:var(--vio-l);position:relative;z-index:1}
     math-field::part(virtual-keyboard){display:block}
     .katex{color:var(--t0)}
-
     .math-card.error { animation: pulse-red .5s ease; }
     @keyframes pulse-red { 0%{ border-color:var(--rose); box-shadow:0 0 8px var(--rose) } 100%{ border-color:var(--br); box-shadow:none } }
 
@@ -267,7 +270,6 @@
     select option{background:var(--bg2);color:var(--t0)}
 
     .scen-area{min-height:140px;border-radius:var(--r2)}
-
     .btn-vio{padding:12px 26px;border-radius:var(--pill);background:linear-gradient(135deg,var(--vio),var(--vio-l));border:none;color:#fff;font-weight:700;font-size:clamp(.82rem,2.2vw,.92rem);cursor:pointer;letter-spacing:.03em;transition:all .2s var(--ease);box-shadow:0 4px 16px var(--vio-g);width:fit-content}
     .btn-vio:hover{transform:translateY(-1px);box-shadow:0 6px 24px var(--vio-g)}
     .btn-vio:active{transform:translateY(0)}
@@ -344,6 +346,9 @@
   </style>
 </head>
 <body>
+
+<!-- Install Banner -->
+<button id="installBanner" onclick="installApp()">📲 Install App</button>
 
 <!-- Toast container -->
 <div class="toast-wrap" id="toastWrap"></div>
@@ -597,6 +602,95 @@
   'use strict';
   window.addEventListener('load', () => {
 
+    /* ── PWA INSTALL HANDLER ───────────────────────────── */
+    let deferredPrompt = null;
+    const installBanner = document.getElementById('installBanner');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBanner.classList.add('show');
+    });
+
+    window.addEventListener('appinstalled', () => {
+      installBanner.classList.remove('show');
+      deferredPrompt = null;
+    });
+
+    window.installApp = function() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((result) => {
+          if (result.outcome === 'accepted') {
+            installBanner.classList.remove('show');
+          }
+          deferredPrompt = null;
+        });
+      } else {
+        toast('Installation not available. Use browser menu.', 'info');
+      }
+    };
+
+    // Service Worker & Manifest
+    if ('serviceWorker' in navigator) {
+      const swCode = `
+        const CACHE_NAME = 'nhm-learns-v1';
+        const ASSETS = [
+          '/',
+          '/index.html',
+          'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Inter:wght@400;500;600;700;800&display=swap',
+          'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css',
+          'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js',
+          'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js',
+          'https://cdn.jsdelivr.net/npm/mathlive/dist/mathlive.min.js',
+          'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js',
+          'https://cdn.jsdelivr.net/npm/mathjs@12.2.1/lib/browser/math.min.js'
+        ];
+        self.addEventListener('install', event => {
+          event.waitUntil(
+            caches.open(CACHE_NAME).then(cache => {
+              return cache.addAll(ASSETS).catch(() => Promise.resolve());
+            })
+          );
+        });
+        self.addEventListener('fetch', event => {
+          if (event.request.method !== 'GET') return;
+          event.respondWith(
+            caches.match(event.request).then(cachedResponse => {
+              const fetchPromise = fetch(event.request).then(networkResponse => {
+                if (networkResponse && networkResponse.ok) {
+                  caches.open(CACHE_NAME).then(cache => cache.put(event.request, networkResponse.clone()));
+                }
+                return networkResponse;
+              }).catch(() => cachedResponse);
+              return cachedResponse || fetchPromise;
+            })
+          );
+        });
+      `;
+      const swBlob = new Blob([swCode], { type: 'application/javascript' });
+      navigator.serviceWorker.register(URL.createObjectURL(swBlob), { scope: '/' }).catch(() => {});
+    }
+
+    const manifest = {
+      name: '~Nhm Learns Math',
+      short_name: 'Nhm Math',
+      description: 'A‑Level Mathematics · Step‑by‑Step Solutions',
+      start_url: '/',
+      display: 'standalone',
+      background_color: '#1A1A1A',
+      theme_color: '#1A1A1A',
+      icons: [
+        { src: 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 192 192%27%3E%3Crect width=%27192%27 height=%27192%27 rx=%2732%27 fill=%27%231A1A1A%27/%3E%3Ctext x=%2796%27 y=%27120%27 font-size=%2772%27 font-family=%27JetBrains Mono,monospace%27 fill=%27%23D97742%27 text-anchor=%27middle%27 font-weight=%27800%27%3ENHM%3C/text%3E%3C/svg%3E', sizes: '192x192', type: 'image/svg+xml' },
+        { src: 'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 512 512%27%3E%3Crect width=%27512%27 height=%27512%27 rx=%2780%27 fill=%27%231A1A1A%27/%3E%3Ctext x=%27256%27 y=%27320%27 font-size=%27200%27 font-family=%27JetBrains Mono,monospace%27 fill=%27%23D97742%27 text-anchor=%27middle%27 font-weight=%27800%27%3ENHM%3C/text%3E%3C/svg%3E', sizes: '512x512', type: 'image/svg+xml' }
+      ]
+    };
+    const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+    const link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = URL.createObjectURL(manifestBlob);
+    document.head.appendChild(link);
+
     /* ── CONSTANTS ─────────────────────────────────── */
     const SK = { prov:'ms_provider', key:'ms_apikey', syl:'ms_syllabus', hist:'ms_history', theme:'ms_theme', srs:'ms_srs' };
 
@@ -767,7 +861,6 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
     const gotoSolveSetup = () => { showSetup(solveSetup, solveResp, solveSetupTab, solveRespTab, true); if(MI)setTimeout(()=>MI.focus(),100); };
     const gotoSolveResp  = () => { showResp(solveSetup, solveResp, solveSetupTab, solveRespTab); graphTab.style.display='none'; };
     const gotoGraph      = () => { solveResp.classList.add('hidden'); graphResp.classList.remove('hidden'); solveSetupTab.classList.remove('active'); solveRespTab.classList.remove('active'); graphTab.classList.add('active'); };
-
     solveSetupTab.addEventListener('click', gotoSolveSetup);
     solveRespTab.addEventListener('click', gotoSolveResp);
     graphTab.addEventListener('click', gotoGraph);
@@ -784,7 +877,6 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
 
     /* ── NAVIGATION ─────────────────────────────────── */
     function setNav(view) { navItems.forEach(n => n.classList[n.dataset.view===view?'add':'remove']('active')); }
-
     function hideAll() {
       viewSolve.classList.add('hidden');
       viewScenario.classList.remove('on');
@@ -927,7 +1019,6 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
           keypressSound: null,
         });
       }
-
       const adj = () => {
         let kh = 0;
         if (window.visualViewport) kh = window.innerHeight - window.visualViewport.height;
@@ -980,7 +1071,6 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
 
     /* ── UTILITIES ──────────────────────────────────── */
     function getLatex() { return MI ? MI.value.trim() : ''; }
-
     function sanitizeJSON(text) {
       try { JSON.parse(text); return text; } catch {}
       let s = text.trim(), ob=0, ob2=0, inStr=false, esc=false;
@@ -994,7 +1084,6 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
       while(ob2>0){s+=']';ob2--;} while(ob>0){s+='}';ob--;}
       try{JSON.parse(s);return s;}catch{return text;}
     }
-
     function parseMDTable(md) {
       const lines = md.trim().split('\n');
       if (lines.length<2||!lines[0].includes('|')||!lines[1].includes('-')) return md;
@@ -1009,15 +1098,12 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
       }
       return h+'</tbody></table>';
     }
-
     function cleanLatex(t) { return t.replace(/(?<!\\)%/g,''); }
-
     function processText(t) {
       let p=t;
       if(p.includes('|---')) p=p.replace(/((?:.*\|.*\n)+)/g,m=>parseMDTable(m));
       return cleanLatex(p);
     }
-
     function renderMath(el) {
       if(typeof renderMathInElement==='function')
         renderMathInElement(el,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
@@ -1032,7 +1118,6 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
       const usr  = customPrompt
         ? `Problem: ${topic.replace(/\\/g,'\\\\')}`
         : `Problem: ${topic.replace(/\\/g,'\\\\')}\nReturn ${m} JSON.${sb}`;
-
       if (prov==='gemini') {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${encodeURIComponent(key)}`;
         const res = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system_instruction:{parts:[{text:sys}]},contents:[{parts:[{text:usr}],role:'user'}],generationConfig:{temperature:.1,maxOutputTokens:2048}})});
@@ -1042,7 +1127,6 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
         if(!t) throw new Error('Gemini returned no text');
         return t;
       }
-
       const url   = prov==='deepseek' ? 'https://api.deepseek.com/v1/chat/completions' : 'https://api.groq.com/openai/v1/chat/completions';
       const model = prov==='deepseek' ? 'deepseek-chat' : 'llama-3.1-8b-instant';
       const res = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${key}`},body:JSON.stringify({model,messages:[{role:'system',content:sys},{role:'user',content:usr}],temperature:.1,max_tokens:2048})});
@@ -1052,28 +1136,19 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
 
     /* ── FUNCTION GRAPHING ──────────────────────────── */
     function plotFunction(latex) {
-      let expr = latex.replace(/\\,/g,'');
-      expr = expr.replace(/\\displaystyle/g,'');
-      expr = expr.replace(/\\,/g,',');
+      let expr = latex.replace(/\\,/g,'').replace(/\\displaystyle/g,'');
       const matches = expr.match(/(?:f\\(x\\)|y)\s*=\s*(.+)/i);
       if (!matches) return null;
-      const rhs = matches[1];
       try {
-        const f = math.compile(rhs);
-        const xMin = -5, xMax = 5, n = 100;
-        const labels = [], data = [];
-        for (let i = 0; i <= n; i++) {
-          const x = xMin + (i/n)*(xMax - xMin);
+        const f = math.compile(matches[1]);
+        const labels=[], data=[];
+        for (let i=0;i<=100;i++) {
+          const x = -5 + i/10;
           const scope = { x, e: Math.E, pi: Math.PI };
-          try {
-            const y = f.evaluate(scope);
-            if (isFinite(y)) { labels.push(x.toFixed(1)); data.push(y); }
-          } catch {}
+          try { const y = f.evaluate(scope); if (isFinite(y)) { labels.push(x.toFixed(1)); data.push(y); } } catch {}
         }
         return { labels, data };
-      } catch(e) {
-        return null;
-      }
+      } catch { return null; }
     }
 
     /* ── RENDER OUTPUT ──────────────────────────────── */
@@ -1094,7 +1169,7 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
         return html;
       } else if (mode==='flashcards') {
         const cards = data.flashcards||[];
-        cards.forEach((c,i) => {
+        cards.forEach(c => {
           const key = `${c.front}__${c.back}`;
           if (!srs[key]) srs[key] = { front:c.front, back:c.back, interval:1, ef:2.5, nextReview:Date.now(), reps:0 };
         });
@@ -1102,17 +1177,13 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
         return `<div class="fc-grid">${cards.map(c => `<div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="fc-front">${cleanLatex(c.front)}</div><div class="fc-back">${cleanLatex(c.back)}</div></div>`).join('')}</div>`;
       } else {
         quizMode.questions = data.quiz||[];
-        quizMode.current = 0;
-        quizMode.score = 0;
-        quizMode.missed = [];
+        quizMode.current = 0; quizMode.score = 0; quizMode.missed = [];
         return renderQuizQuestion();
       }
     }
 
     function renderQuizQuestion() {
-      if (quizMode.current >= quizMode.questions.length) {
-        return renderQuizResults();
-      }
+      if (quizMode.current >= quizMode.questions.length) return renderQuizResults();
       const q = quizMode.questions[quizMode.current];
       const opts = q.options.map((o,j) => `<div class="qopt" data-index="${j}" onclick="window._quizSelect(this,'${q.answer}',${j})">${String.fromCharCode(65+j)}) ${cleanLatex(o)}</div>`).join('');
       return `<div class="quiz-card"><p>${quizMode.current+1}. ${cleanLatex(q.question)}</p>${opts}</div>
@@ -1130,24 +1201,19 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
       } else {
         el.classList.add('wrong');
         p.querySelectorAll('.qopt').forEach(o => {
-          const i = parseInt(o.dataset.index);
-          if (String.fromCharCode(65+i) === correctAns) o.classList.add('correct');
+          if (String.fromCharCode(65+parseInt(o.dataset.index)) === correctAns) o.classList.add('correct');
         });
         quizMode.missed.push(quizMode.questions[quizMode.current]);
         feedback('error');
       }
       quizMode.current++;
-      setTimeout(() => {
-        solveOut.innerHTML = renderOutput('quiz', {});
-        renderMath(solveOut);
-      }, 600);
+      setTimeout(() => { solveOut.innerHTML = renderOutput('quiz', {}); renderMath(solveOut); }, 600);
     };
 
     function renderQuizResults() {
       const missedText = quizMode.missed.map(q => q.question).join(', ');
       if (missedText) {
-        const currentSyll = syllInput.value;
-        syllInput.value = currentSyll + '\nMissed concepts: ' + missedText;
+        syllInput.value = (syllInput.value + '\nMissed concepts: ' + missedText).trim();
         localStorage.setItem(SK.syl, syllInput.value);
       }
       return `<div class="answer-card"><div class="answer-label">Quiz Complete!</div>
@@ -1264,22 +1330,17 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
         statPills.forEach(x=>x.classList.remove('active'));
         p.classList.add('active');
         Object.values(statMap).forEach(id=>$(id).classList.remove('on'));
-        const sec=$(statMap[p.dataset.stat]);
-        if(sec) sec.classList.add('on');
+        $(statMap[p.dataset.stat]).classList.add('on');
         if(p.dataset.stat==='ai') gotoAISetup();
       });
     });
 
     /* ── CHART HELPERS ──────────────────────────────── */
-    const gridColor='rgba(255,255,255,.06)';
-    const tickColor='#808080';
+    const gridColor='rgba(255,255,255,.06)', tickColor='#808080';
     const baseOpts={responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tickColor},grid:{color:gridColor}},y:{ticks:{color:tickColor},grid:{color:gridColor},beginAtZero:true}}};
-
     function nums(str){ return str.split(',').map(s=>parseFloat(s.trim())).filter(n=>!isNaN(n)); }
-
     function factorial(n){ return n<=1?1:n*factorial(n-1); }
 
-    /* Descriptive */
     $('descBtn').addEventListener('click',()=>{
       const d=nums(descData.value);
       if(d.length<2){$('descRes').innerHTML='<span style="color:var(--rose)">Enter at least two numbers.</span>';return;}
@@ -1309,7 +1370,6 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
       charts.desc=new Chart(ctx,{type:'bar',data:{labels:freq.map((_,i)=>(min+i*bw).toFixed(1)),datasets:[{data:freq,backgroundColor:'rgba(217,119,66,.65)',borderColor:'var(--vio)',borderWidth:1}]},options:baseOpts});
     });
 
-    /* Scatter */
     $('scatBtn').addEventListener('click',()=>{
       const x=nums($('scatX').value),y=nums($('scatY').value);
       if(x.length!==y.length||x.length<3){$('scatRes').innerHTML='<span style="color:var(--rose)">Equal X and Y values needed (min 3).</span>';return;}
@@ -1328,7 +1388,6 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
       ]},options:{responsive:true,plugins:{legend:{display:true,labels:{color:tickColor}}},scales:{x:{ticks:{color:tickColor},grid:{color:gridColor}},y:{ticks:{color:tickColor},grid:{color:gridColor}}}}});
     });
 
-    /* Binomial */
     $('binBtn').addEventListener('click',()=>{
       const n=parseInt($('binN').value),p=parseFloat($('binP').value);
       if(isNaN(n)||isNaN(p)||n<1||p<0||p>1)return;
@@ -1339,7 +1398,6 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
       charts.binom=new Chart(ctx,{type:'bar',data:{labels:labs,datasets:[{data:probs,backgroundColor:'rgba(217,119,66,.65)',borderColor:'var(--vio)',borderWidth:1}]},options:baseOpts});
     });
 
-    /* Normal */
     $('normBtn').addEventListener('click',()=>{
       const mu=parseFloat($('normMu').value),sig=parseFloat($('normSig').value);
       if(isNaN(mu)||isNaN(sig)||sig<=0)return;
@@ -1350,7 +1408,6 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
       charts.norm=new Chart(ctx,{type:'line',data:{labels:labs,datasets:[{data:ds,borderColor:'var(--vio)',fill:true,backgroundColor:'rgba(217,119,66,.09)',pointRadius:0,borderWidth:2,tension:.4}]},options:{...baseOpts,plugins:{legend:{display:false}}}});
     });
 
-    /* ── SRS FLASHCARD REVIEW ───────────────────────── */
     window.showFlashcardReview = function(key, card) {
       const html = `<div class="flashcard flipped" style="margin-bottom:12px"><div class="fc-front" onclick="this.parentElement.classList.toggle('flipped')">${cleanLatex(card.front)}</div><div class="fc-back" onclick="this.parentElement.classList.toggle('flipped')">${cleanLatex(card.back)}</div></div>
       <div style="display:flex;gap:8px;justify-content:center">
@@ -1377,7 +1434,6 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
       renderHistory();
     };
 
-    /* ── EVENTS ─────────────────────────────────────── */
     solveBtn.addEventListener('click', doSolve);
     scenSolveBtn.addEventListener('click', doScenario);
     $('aiBtn').addEventListener('click', doAI);
@@ -1390,4 +1446,4 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
 })();
 </script>
 </body>
-</html>
+</html
