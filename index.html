@@ -432,7 +432,69 @@
 
   <!-- ── STATS VIEW ─────────────────────────────────────── -->
   <div class="view-stats" id="viewStats">
-    <!-- ... (unchanged) ... -->
+    <div class="stat-nav">
+      <button class="stat-pill active" data-stat="desc">Descriptive</button>
+      <button class="stat-pill" data-stat="scatter">Scatter</button>
+      <button class="stat-pill" data-stat="binom">Binomial</button>
+      <button class="stat-pill" data-stat="normal">Normal</button>
+      <button class="stat-pill" data-stat="ai">AI Assist</button>
+    </div>
+
+    <div class="stat-sec on" id="descSec">
+      <div class="lbl">Data (comma-separated)</div>
+      <textarea id="descData" rows="2">12,15,18,22,25,30</textarea>
+      <button class="btn-vio" id="descBtn">Compute Stats</button>
+      <div class="stat-res" id="descRes"></div>
+      <div class="chart-box"><canvas id="descChart"></canvas></div>
+      <div class="stat-res" id="descTable"></div>
+    </div>
+
+    <div class="stat-sec" id="scatterSec">
+      <div class="lbl">X values</div><input type="text" id="scatX" value="1,2,3,4,5">
+      <div class="lbl">Y values</div><input type="text" id="scatY" value="2,4,5,4,6">
+      <button class="btn-vio" id="scatBtn">Plot &amp; Compute</button>
+      <div class="stat-res" id="scatRes"></div>
+      <div class="chart-box"><canvas id="scatChart"></canvas></div>
+    </div>
+
+    <div class="stat-sec" id="binomSec">
+      <div class="ig">
+        <label>n (trials)</label><input type="number" id="binN" value="10">
+        <label>p (prob)</label><input type="number" id="binP" value="0.5" step="0.01" min="0" max="1">
+      </div>
+      <button class="btn-vio" id="binBtn">Plot PMF</button>
+      <div class="chart-box"><canvas id="binChart"></canvas></div>
+    </div>
+
+    <div class="stat-sec" id="normSec">
+      <div class="ig">
+        <label>Mean (μ)</label><input type="number" id="normMu" value="0">
+        <label>Std Dev (σ)</label><input type="number" id="normSig" value="1" min="0.01">
+      </div>
+      <button class="btn-vio" id="normBtn">Plot PDF</button>
+      <div class="chart-box"><canvas id="normChart"></canvas></div>
+    </div>
+
+    <div class="stat-sec" id="aiStatSec">
+      <div class="tab-bar">
+        <button class="tab-btn active" id="aiSetupTab">Setup</button>
+        <button class="tab-btn" id="aiRespTab">Response</button>
+      </div>
+      <div class="setup" id="aiSetup">
+        <div class="lbl">Describe your data or problem</div>
+        <textarea id="aiInput" rows="3" placeholder="e.g., Heights: 150,160,170,180. Compute mean, std dev."></textarea>
+        <button class="btn-vio" id="aiBtn">Analyze with AI →</button>
+        <div class="loading" id="aiLoad">
+          <div class="load-bar"><div class="load-fill" id="aiFill"></div></div>
+          <div class="load-dots"><div class="load-dot"></div><div class="load-dot"></div><div class="load-dot"></div></div>
+          <div class="load-stage active">Analyzing…</div>
+        </div>
+      </div>
+      <div class="response hidden" id="aiResp">
+        <div class="ai-scroll" id="aiOut"></div>
+        <div class="chart-box" id="aiChartBox" style="display:none"><canvas id="aiChart"></canvas></div>
+      </div>
+    </div>
   </div>
 
   <!-- ── HISTORY VIEW ───────────────────────────────────── -->
