@@ -356,7 +356,7 @@
 <div class="app" id="appEl">
   <!-- Brand -->
   <div class="brand">
-    <h1><span class="brand-txt">Math Solver</span><span class="brand-cur"></span></h1>
+    <h1><span class="brand-txt">~Nhm Learns Math</span><span class="brand-cur"></span></h1>
     <p class="tagline">A‑Level Mathematics · Step‑by‑Step Solutions</p>
   </div>
 
@@ -695,14 +695,16 @@
 For "solution": { "solution": ["Step 1: ...", "Step 2: ...", ... ] }.
 For "flashcards": { "flashcards": [ {"front":"...", "back":"..."}, ... ] }.
 For "quiz": { "quiz": [ {"question":"...", "options":["A...","B...","C...","D..."], "answer":"A"}, ... ] }.
-You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
+You may include markdown tables. Escape backslashes: \\\\frac{}{}.
+Do NOT use **bold** or ## headings. Use plain text.`;
 
     const STATS_PROMPT = `You are an A‑Level mathematics examiner. Answer the following statistics problem step by step. Rules:
 - Use ONLY mathematical notation, tables, and concise statements.
 - Wrap every mathematical expression in $...$ or $$...$$.
 - Present data in markdown tables.
 - If a graph is appropriate, include a JSON block (\`\`\`json ... \`\`\`) with Chart.js config: { "type": "bar"|"scatter"|"line", "labels": [...], "datasets": [{ "label": "...", "data": [...] }] }.
-- Do not include extra text outside the solution steps.`;
+- Do not include extra text outside the solution steps.
+- Do NOT use **bold** or ## headings.`;
 
     /* ── DOM REFS ───────────────────────────────────── */
     const $  = id => document.getElementById(id);
@@ -1079,7 +1081,12 @@ You may include markdown tables. Escape backslashes: \\\\frac{}{}.`;
     function cleanLatex(t) { return t.replace(/(?<!\\)%/g,''); }
     function processText(t) {
       let p=t;
+      // Convert markdown tables
       if(p.includes('|---')) p=p.replace(/((?:.*\|.*\n)+)/g,m=>parseMDTable(m));
+      // Remove any remaining markdown formatting (**bold** and ## headings)
+      p = p.replace(/\*\*/g, '');
+      p = p.replace(/__/g, '');
+      p = p.replace(/^#{1,6}\s+.*$/gm, '');
       return cleanLatex(p);
     }
     function renderMath(el) {
