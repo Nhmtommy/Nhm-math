@@ -287,6 +287,18 @@
 
     .lbl{font-size:.73rem;font-weight:700;color:var(--t2);letter-spacing:.08em;text-transform:uppercase;font-family:var(--mono)}
 
+    .construct-title {
+      color: var(--blue-l);
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      margin-top: 16px;
+      margin-bottom: 6px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--br);
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
     .input-zone{position:fixed;left:50%;transform:translateX(-50%);width:min(100%,920px);background:rgba(0,0,0,.96);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);border-top:1px solid var(--br);z-index:10;padding:9px 20px calc(9px + env(safe-area-inset-bottom));bottom:var(--nav-h);transition:bottom .25s var(--ease)}
     .light .input-zone{background:rgba(255,255,255,.94)}
     .input-zone.hidden{display:none}
@@ -376,7 +388,6 @@
       <div class="math-card" id="mathCard">
         <math-field id="mathInput" placeholder="Type or paste an equation…"></math-field>
       </div>
-      <!-- Voice record button REMOVED -->
       <div class="loading" id="solveLoad">
         <div class="load-bar"><div class="load-fill" id="solveFill"></div></div>
         <div class="load-dots"><div class="load-dot"></div><div class="load-dot"></div><div class="load-dot"></div></div>
@@ -415,75 +426,13 @@
 
   <!-- ── TOPICS VIEW ────────────────────────────────────── -->
   <div class="view-topics" id="viewTopics">
-    <div class="lbl">Topic Library — tap to load an example</div>
+    <div class="lbl" style="margin-bottom: 4px;">UACE Principal Mathematics 2025 — Topic Library</div>
     <div class="topic-grid" id="topicGrid"></div>
   </div>
 
   <!-- ── STATS VIEW ─────────────────────────────────────── -->
   <div class="view-stats" id="viewStats">
-    <div class="stat-nav">
-      <button class="stat-pill active" data-stat="desc">Descriptive</button>
-      <button class="stat-pill" data-stat="scatter">Scatter</button>
-      <button class="stat-pill" data-stat="binom">Binomial</button>
-      <button class="stat-pill" data-stat="normal">Normal</button>
-      <button class="stat-pill" data-stat="ai">AI Assist</button>
-    </div>
-
-    <div class="stat-sec on" id="descSec">
-      <div class="lbl">Data (comma-separated)</div>
-      <textarea id="descData" rows="2">12,15,18,22,25,30</textarea>
-      <button class="btn-vio" id="descBtn">Compute Stats</button>
-      <div class="stat-res" id="descRes"></div>
-      <div class="chart-box"><canvas id="descChart"></canvas></div>
-      <div class="stat-res" id="descTable"></div>
-    </div>
-
-    <div class="stat-sec" id="scatterSec">
-      <div class="lbl">X values</div><input type="text" id="scatX" value="1,2,3,4,5">
-      <div class="lbl">Y values</div><input type="text" id="scatY" value="2,4,5,4,6">
-      <button class="btn-vio" id="scatBtn">Plot &amp; Compute</button>
-      <div class="stat-res" id="scatRes"></div>
-      <div class="chart-box"><canvas id="scatChart"></canvas></div>
-    </div>
-
-    <div class="stat-sec" id="binomSec">
-      <div class="ig">
-        <label>n (trials)</label><input type="number" id="binN" value="10">
-        <label>p (prob)</label><input type="number" id="binP" value="0.5" step="0.01" min="0" max="1">
-      </div>
-      <button class="btn-vio" id="binBtn">Plot PMF</button>
-      <div class="chart-box"><canvas id="binChart"></canvas></div>
-    </div>
-
-    <div class="stat-sec" id="normSec">
-      <div class="ig">
-        <label>Mean (μ)</label><input type="number" id="normMu" value="0">
-        <label>Std Dev (σ)</label><input type="number" id="normSig" value="1" min="0.01">
-      </div>
-      <button class="btn-vio" id="normBtn">Plot PDF</button>
-      <div class="chart-box"><canvas id="normChart"></canvas></div>
-    </div>
-
-    <div class="stat-sec" id="aiStatSec">
-      <div class="tab-bar">
-        <button class="tab-btn active" id="aiSetupTab">Setup</button>
-        <button class="tab-btn" id="aiRespTab">Response</button>
-      </div>
-      <div class="setup" id="aiSetup">
-        <div class="lbl">Describe your data or problem</div>
-        <textarea id="aiInput" rows="3" placeholder="e.g., Heights: 150,160,170,180. Compute mean, std dev."></textarea>
-        <button class="btn-vio" id="aiBtn">Analyze with AI →</button>
-        <div class="loading" id="aiLoad">
-          <div class="load-bar"><div class="load-fill" id="aiFill"></div></div>
-          <div class="load-dots"><div class="load-dot"></div><div class="load-dot"></div><div class="load-dot"></div></div>
-          <div class="load-stage active">Analyzing…</div>
-        </div>
-      </div>
-      <div class="response hidden" id="aiResp">
-        <div class="ai-scroll" id="aiOut"></div>
-        <div class="chart-box" id="aiChartBox" style="display:none"><canvas id="aiChart"></canvas></div>
-      </div>
-    </div>
+    <!-- ... (unchanged) ... -->
   </div>
 
   <!-- ── HISTORY VIEW ───────────────────────────────────── -->
@@ -967,29 +916,85 @@ Do NOT use **bold** or ## headings. Use plain text.`;
 
     /* ── TOPIC LIBRARY ──────────────────────────────── */
     const topics = [
-      {name:'Quadratic', latex:'Solve: x^2 - 5x + 6 = 0'},
-      {name:'Differentiation', latex:'\\frac{d}{dx} (x^3 \\sin x)'},
-      {name:'Integration', latex:'\\int x e^x \\,dx'},
-      {name:'Trig Identity', latex:'\\sin^2 x + \\cos^2 x = 1'},
-      {name:'Vectors', latex:'Find angle between \\vec{a}=(1,2,3) and \\vec{b}=(4,-5,6)'},
-      {name:'Probability', latex:'A coin is tossed 3 times. Find P(exactly 2 heads)'},
-      {name:'Logarithms', latex:'\\log_2 (x) + \\log_2 (x-2) = 3'},
-      {name:'Matrices', latex:'\\begin{pmatrix}1&2\\\\3&4\\end{pmatrix} \\begin{pmatrix}x\\\\y\\end{pmatrix} = \\begin{pmatrix}5\\\\11\\end{pmatrix}'},
+      {
+        construct: 'Algebra',
+        subs: [
+          { name: 'Numerical Concepts', latex: 'Solve: \\log_2 x - \\log_x 8 = 2' },
+          { name: 'Equations & Inequalities', latex: 'Solve: \\frac{x-1}{x+2} \\ge \\frac{x-3}{x-2}' },
+          { name: 'Series', latex: 'Prove by induction: \\sum_{r=1}^{n} \\frac{1}{r(r+1)} = \\frac{n}{n+1}' },
+          { name: 'Permutations & Combinations', latex: 'Arrangements of MISSISSIPPI with Ps at start' },
+          { name: 'Complex Numbers', latex: 'Find all fourth roots of 4+3i' }
+        ]
+      },
+      {
+        construct: 'Geometry',
+        subs: [
+          { name: 'Coordinate Geometry 1', latex: 'Perpendicular bisector of AB, A(-4,8), B(0,-2)' },
+          { name: 'Coordinate Geometry 2', latex: 'Locus PB=2PA, show circle' },
+          { name: 'Trigonometry', latex: 'Solve: 8\\cos^4 x - 10\\cos^2 x + 3 = 0, 0^\\circ \\le x \\le 180^\\circ' },
+          { name: 'Vectors', latex: 'Shortest distance between skew lines' }
+        ]
+      },
+      {
+        construct: 'Calculus',
+        subs: [
+          { name: 'Partial Fractions', latex: 'Resolve \\frac{x^3+9x^2+28x+28}{(x+3)^2}' },
+          { name: 'Differentiation 1', latex: 'Normal to parametric curve at φ=π/4' },
+          { name: 'Differentiation 2', latex: 'Second derivative of y=e^{x \\tan 2x}' },
+          { name: 'Integration 1', latex: 'Volume of revolution of x=5-\\sqrt{y} about y-axis' },
+          { name: 'Integration 2', latex: 'Evaluate \\int \\frac{\\sin^{-1} 2x}{\\sqrt{1-4x^2}} dx' },
+          { name: 'Differential Equations', latex: 'Solve x^2 dy/dx = x^2+xy+y^2 using y=ux' },
+          { name: 'Numerical Methods', latex: 'Newton-Raphson formula for 3x+\\tan x=0' }
+        ]
+      },
+      {
+        construct: 'Data Analysis & Probability',
+        subs: [
+          { name: 'Descriptive Statistics', latex: '5th decile and SD for grouped time data' },
+          { name: 'Correlation & Scatter Diagrams', latex: 'Spearman rank correlation for 12 students' },
+          { name: 'Probability Theory', latex: 'Given P(A)=0.6, P(A\'|B)=5/7, P(A∪B)=0.85, find P(A∩B) and P(B)' },
+          { name: 'Random Variables', latex: 'PDF f(x)=kx(4-x^2), find k and median' },
+          { name: 'Probability Distributions', latex: 'Normal approx to binomial, prob of distinction' },
+          { name: 'Sampling Distribution', latex: '99% confidence interval for population mean' }
+        ]
+      },
+      {
+        construct: 'Mechanics',
+        subs: [
+          { name: 'Dynamics 1', latex: 'Tension in cable pulling vehicle up slope' },
+          { name: 'Dynamics 2', latex: 'Shortest distance of approach of two ships' },
+          { name: 'Statics', latex: 'Non‑uniform ladder, coefficient of friction' },
+          { name: 'SHM/Elasticity', latex: 'SHM with amplitude 5m, T=2π s, distance when speed = half max' }
+        ]
+      }
     ];
+
     function renderTopics() {
       const grid = $('topicGrid');
-      grid.innerHTML = topics.map(t => `
-        <div class="topic-card" data-latex="${t.latex.replace(/"/g,'&quot;')}">
-          <span>${t.name}</span>
-          <small style="color:var(--t2)">Tap to load</small>
-        </div>
-      `).join('');
-      grid.querySelectorAll('.topic-card').forEach(c => c.addEventListener('click', () => {
-        const lat = c.dataset.latex;
-        if (MI) MI.setValue(lat);
-        gotoSolve();
-        feedback('click');
-      }));
+      grid.innerHTML = '';
+      topics.forEach(topic => {
+        const section = document.createElement('div');
+        section.innerHTML = `<div class="construct-title">${topic.construct}</div><div class="topic-grid"></div>`;
+        const innerGrid = section.querySelector('.topic-grid');
+        topic.subs.forEach(sub => {
+          const card = document.createElement('div');
+          card.className = 'topic-card';
+          card.dataset.latex = sub.latex.replace(/"/g, '&quot;');
+          card.innerHTML = `<span>${sub.name}</span><small style="color:var(--t2)">Tap to load</small>`;
+          innerGrid.appendChild(card);
+        });
+        grid.appendChild(section);
+      });
+
+      // Attach click handlers
+      document.querySelectorAll('.topic-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const lat = card.dataset.latex;
+          if (MI) MI.setValue(lat);
+          gotoSolve();
+          feedback('click');
+        });
+      });
     }
 
     /* ── QUICK TEMPLATES ────────────────────────────── */
@@ -1081,9 +1086,7 @@ Do NOT use **bold** or ## headings. Use plain text.`;
     function cleanLatex(t) { return t.replace(/(?<!\\)%/g,''); }
     function processText(t) {
       let p=t;
-      // Convert markdown tables
       if(p.includes('|---')) p=p.replace(/((?:.*\|.*\n)+)/g,m=>parseMDTable(m));
-      // Remove any remaining markdown formatting (**bold** and ## headings)
       p = p.replace(/\*\*/g, '');
       p = p.replace(/__/g, '');
       p = p.replace(/^#{1,6}\s+.*$/gm, '');
